@@ -7,7 +7,6 @@
 (**********************************************************************)
 
 From Equations Require Import Init DepElim HSets HoTTUtil.
-Require Import Coq.Logic.JMeq.
 Require Import HoTT.Basics.Overture.
 Require Import HoTT.Basics.Decidable.
 

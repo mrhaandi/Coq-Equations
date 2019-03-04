@@ -22,6 +22,7 @@ hottDir="$equationsDir"/custom-HoTT
 usageExit() {
   echo "Usage: $0 [HoTT|Eq|Ex]" >&2
   echo "  HoTT  builds custom HoTT" >&2
+  echo "  Files builds custom HoTT files missing from HoTT" >&2
   echo "  Eq    builds Equations (depends on custom HoTT)." >&2
   echo "  Ex    builds Equations and examples (depends on custom HoTT)." >&2
   exit 1
@@ -82,7 +83,7 @@ createHoTTSymlinks() {
 }
 
 buildFromHoTTDir() {
-  cmd="./hoqtop -boot"
+  cmd="./hoqc"
   echo $cmd "$@"
   $cmd "$@"
 }
@@ -114,27 +115,29 @@ buildCustomHoTTFiles() {
   cd "$hottDir"
 
   # The Extraction.v is by built by the wrong coq. We must build it with hoq.
-  buildFromHoTTDir -native-compiler -compile coq/plugins/extraction/Extraction.v
+  # buildFromHoTTDir -native-compiler yes -compile coq/plugins/extraction/Extraction.v
 
   # Build the symlinks.
-  buildFromHoTTDir -compile coq/theories/Logic/EqdepFacts.v
-  buildFromHoTTDir -compile coq/theories/Logic/Eqdep.v
-  buildFromHoTTDir -compile coq/theories/Logic/JMeq.v
-  buildFromHoTTDir -compile coq/theories/Logic/ProofIrrelevance.v
-  buildFromHoTTDir -compile coq/theories/Program/Equality.v
-  buildFromHoTTDir -compile coq/theories/Init/Wf.v
-  buildFromHoTTDir -compile coq/theories/Relations/Relation_Definitions.v
-  buildFromHoTTDir -compile coq/theories/Relations/Relation_Operators.v
-  buildFromHoTTDir -compile coq/theories/Relations/Operators_Properties.v
-  buildFromHoTTDir -compile coq/theories/Relations/Relations.v
+  buildFromHoTTDir  coq/theories/Logic/EqdepFacts.v
+  buildFromHoTTDir  coq/theories/Logic/Eqdep.v
+  buildFromHoTTDir  coq/theories/Logic/ProofIrrelevance.v
+  buildFromHoTTDir  coq/theories/Init/Wf.v
+  buildFromHoTTDir  coq/theories/Relations/Relation_Definitions.v
+  buildFromHoTTDir  coq/theories/Relations/Relation_Operators.v
+  buildFromHoTTDir  coq/theories/Relations/Operators_Properties.v
+  buildFromHoTTDir  coq/theories/Relations/Relations.v
+}
+
+makeFiles() {
+  createHoTTSymlinks
+  buildCustomHoTTFiles
 }
 
 buildHoTT() {
   cloneHoTTIfNotThere
   makeCoq
   makeHoTT
-  createHoTTSymlinks
-  buildCustomHoTTFiles
+  makeFiles
 }
 
 requireCustomHoTT() {
@@ -149,8 +152,8 @@ createEquationsMakefileIfNotThere() {
   if [ -e Makefile ]; then
     return 0
   fi
-  echo "$hottDir"/coq-HoTT/bin/coq_makefile \-f _CoqProject \-o Makefile
-  "$hottDir"/coq-HoTT/bin/coq_makefile -f _CoqProject -o Makefile
+  echo coq_makefile \-f _CoqProject \-o Makefile
+  coq_makefile -f _CoqProject -o Makefile
 }
 
 buildEquations() {
@@ -168,6 +171,8 @@ buildExamples() {
 
 if [ "$1" = Eq ]; then
   buildEquations
+elif [ "$1" = Files ]; then
+  makeFiles
 elif [ "$1" = Ex ]; then
   buildExamples
 elif [ "$1" = HoTT ]; then

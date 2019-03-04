@@ -7,7 +7,8 @@
 (**********************************************************************)
 
 Require Import HoTT.Basics.Overture.
-Require Import Equations.Init Equations.Classes EqdepFacts.
+Require Import Coq.Logic.EqdepFacts.
+Require Import Equations.Init Equations.Classes.
 
 (** Decidable equality.
 

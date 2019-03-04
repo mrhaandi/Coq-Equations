@@ -86,7 +86,7 @@ Create HintDb rec_decision discriminated.
    to allow computations with functions defined by well-founded recursion.
    *)
 
-Require Import Wellfounded.Transitive_Closure.
+(* Require Import Coq.Wellfounded.Transitive_Closure. *)
 (* TODO Missing rest of file...
 
 Lemma WellFounded_trans_clos `(WF : WellFounded A R) : WellFounded (clos_trans A R).
